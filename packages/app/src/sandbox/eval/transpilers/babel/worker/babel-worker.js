@@ -5,6 +5,7 @@ import macrosPlugin from 'babel-plugin-macros';
 import refreshBabelPlugin from 'react-refresh/babel';
 import chainingPlugin from '@babel/plugin-proposal-optional-chaining';
 import coalescingPlugin from '@babel/plugin-proposal-nullish-coalescing-operator';
+import envPreset from '@babel/preset-env';
 
 import delay from '@codesandbox/common/lib/utils/delay';
 
@@ -438,8 +439,6 @@ try {
   console.error(e);
 }
 
-self.postMessage('ready');
-
 export type IBabel = {
   transform: (
     code: string,
@@ -579,20 +578,6 @@ self.addEventListener('message', async event => {
       version !== 7
     ) {
       Babel.registerPreset('env', Babel.availablePresets.latest);
-    }
-
-    if (
-      version === 7 &&
-      (flattenedPresets.indexOf('env') > -1 ||
-        flattenedPresets.indexOf('@babel/preset-env') > -1 ||
-        flattenedPresets.indexOf('@vue/app') > -1)
-    ) {
-      const envPreset = await import(
-        /* webpackChunkName: 'babel-preset-env' */ '@babel/preset-env'
-      );
-
-      // Hardcode, since we want to override env
-      Babel.availablePresets.env = envPreset;
     }
 
     if (
@@ -748,3 +733,10 @@ self.addEventListener('message', async event => {
     });
   }
 });
+
+Babel.availablePresets.env = envPreset;
+// Warmup babel
+Babel.transform('const a = `b`;', {
+  presets: ['env'],
+});
+self.postMessage('ready');

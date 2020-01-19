@@ -566,10 +566,6 @@ export default class TranspiledModule {
    */
   async transpile(manager: Manager) {
     try {
-      if (this.source) {
-        return this;
-      }
-
       if (manager.transpileJobs[this.getId()]) {
         // Is already being transpiled
         return this;
@@ -577,6 +573,10 @@ export default class TranspiledModule {
 
       // eslint-disable-next-line
       manager.transpileJobs[this.getId()] = true;
+
+      if (this.source) {
+        return this;
+      }
 
       this.hasMissingDependencies = false;
 
@@ -632,7 +632,6 @@ export default class TranspiledModule {
             .join('!');
 
           try {
-            const startTime = Date.now();
             const {
               transpiledCode,
               sourceMap,
@@ -640,9 +639,6 @@ export default class TranspiledModule {
             } = await transpilerConfig.transpiler.transpile(
               code,
               loaderContext
-            );
-            debug(
-              `Transpiled '${this.getId()}' in ${Date.now() - startTime}ms`
             );
 
             if (this.errors.length) {

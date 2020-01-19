@@ -65,6 +65,10 @@ export default abstract class WorkerTranspiler extends Transpiler {
     }
   }
 
+  hasCustomMeasure() {
+    return true;
+  }
+
   getWorker(): Promise<Worker> {
     // @ts-ignore
     return Promise.resolve(new this.Worker());

@@ -1,3 +1,4 @@
+import { measure, endMeasure } from 'sandbox/utils/metrics';
 import { SourceMap } from './utils/get-source-map';
 import { LoaderContext } from '../transpiled-module';
 import Manager from '../manager';
@@ -36,7 +37,18 @@ export default abstract class Transpiler {
     code: string,
     loaderContext: LoaderContext
   ): Promise<TranspilerResult> {
-    return this.doTranspilation(code, loaderContext);
+    const id = loaderContext._module.getId();
+
+    measure(`transpilation-${this.name}-${id}`);
+
+    return this.doTranspilation(code, loaderContext).then(x => {
+      endMeasure(
+        `transpilation-${this.name}-${id}`,
+        `Transpilation (${this.name}) (${id})`
+      );
+
+      return x;
+    });
   }
 
   /**

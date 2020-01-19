@@ -472,6 +472,7 @@ async function compile({
 
     dispatch({ type: 'status', status: 'installing-dependencies' });
 
+    metrics.measure('initialize-manager');
     manager =
       manager ||
       initializeManager(sandboxId, template, modules, configurations, {
@@ -483,6 +484,7 @@ async function compile({
       templateDefinition,
       configurations
     );
+    metrics.endMeasure('initialize-manager', 'Initialize Manager');
 
     dependencies = await manager.preset.processDependencies(dependencies);
 
@@ -513,14 +515,15 @@ async function compile({
       );
     }
 
+    metrics.measure('consume-cache');
     if (shouldReloadManager || firstLoad) {
       // Now initialize the data the manager can only use once dependencies are loaded
-
       manager.setManifest(manifest);
       // We save the state of transpiled modules, and load it here again. Gives
       // faster initial loads.
       usedCache = await consumeCache(manager);
     }
+    metrics.endMeasure('consume-cache', 'Consume Cache');
 
     metrics.measure('transpilation');
 

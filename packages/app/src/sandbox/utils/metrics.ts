@@ -5,7 +5,7 @@ const debug = _debug('cs:compiler:measurements');
 type MeasurementKey = string;
 
 const runningMeasurements = new Map<string, number>();
-const measurements: { [meaurement: string]: number } = {};
+const measurements: { [measurement: string]: number } = {};
 
 export function measure(key: MeasurementKey) {
   performance.mark(`${key}_start`);
@@ -19,12 +19,12 @@ export function endMeasure(
     lastTime?: number;
   } = {}
 ) {
+  const { lastTime } = options;
   performance.mark(`${key}_end`);
 
   const lastMeasurement =
-    typeof options.lastTime === 'undefined'
-      ? runningMeasurements.get(key)
-      : options.lastTime;
+    typeof lastTime === 'undefined' ? runningMeasurements.get(key) : lastTime;
+
   if (typeof lastMeasurement === 'undefined') {
     console.warn(
       `Measurement for '${key}' was requested, but never was started`

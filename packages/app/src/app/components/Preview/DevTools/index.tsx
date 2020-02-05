@@ -14,6 +14,7 @@ import { problems } from './Problems';
 import { reactDevTools } from './React-Devtools';
 import { terminal } from './Terminal';
 import { tests } from './Tests';
+import { webpack } from './WebpackAnalyzer';
 import { Container, Header, ContentContainer } from './elements';
 import { viewNotFound } from './ViewNotFound';
 
@@ -80,6 +81,7 @@ const VIEWS: IViews = {
   [console.id]: console,
   [problems.id]: problems,
   [tests.id]: tests,
+  [webpack.id]: webpack,
   [terminal.id]: terminal,
   [reactDevTools.id]: reactDevTools,
 };

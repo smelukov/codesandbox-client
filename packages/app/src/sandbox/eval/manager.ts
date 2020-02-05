@@ -119,6 +119,7 @@ export default class Manager {
   hmrStatus: HMRStatus = 'idle';
   hmrStatusChangeListeners: Set<(status: HMRStatus) => void>;
   testRunner: import('./tests/jest-lite').default;
+  bundleAnalyzer: import('./bundle-analyzer/webpack').default;
   isFirstLoad: boolean;
 
   fileResolver: IFileResolver | undefined;
@@ -200,6 +201,18 @@ export default class Manager {
     ).then(({ default: TestRunner }) => new TestRunner(this));
 
     return this.testRunner;
+  }
+
+  async initializeBundleAnalyzer() {
+    if (this.bundleAnalyzer) {
+      return this.bundleAnalyzer;
+    }
+
+    this.bundleAnalyzer = await import(
+      /* webpackChunkName: 'webpack-analyzer' */ './bundle-analyzer/webpack'
+    ).then(({ default: WebpackAnalyzer }) => new WebpackAnalyzer(this));
+
+    return this.bundleAnalyzer;
   }
 
   setupFileResolver() {
@@ -1067,8 +1080,8 @@ export default class Manager {
       entryPath,
       optimizeForSize,
     }: { entryPath?: string; optimizeForSize: boolean } = {
-      optimizeForSize: true,
-    }
+        optimizeForSize: true,
+      }
   ) {
     const serializedTModules: { [id: string]: SerializedTranspiledModule } = {};
 

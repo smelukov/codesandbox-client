@@ -685,6 +685,14 @@ async function compile({
       firstLoad
     );
 
+    try {
+      await manager.initializeBundleAnalyzer();
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Bundle analyzer error', e);
+      }
+    }
+
     setTimeout(async () => {
       try {
         await manager.initializeTestRunner();
